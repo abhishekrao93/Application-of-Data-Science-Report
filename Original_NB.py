@@ -38,15 +38,26 @@ def negate_sequence(text):
     delims = "?.,!:;"
     result = []
     words = text.split()
+    prev = None
+    pprev = None
     for word in words:
         stripped = word.strip(delims).lower()
         negated = "not_" + stripped if negation else stripped
         result.append(negated)
+        if prev:
+            bigram = prev + " " + negated
+            result.append(bigram)
+            if pprev:
+                trigram = pprev + " " + bigram
+                result.append(trigram)
+            pprev = prev
+        prev = negated
+
         if any(neg in word for neg in ["not", "n't", "no"]):
             negation = not negation
-
         if any(c in word for c in delims):
             negation = False
+
     return result
 
 
@@ -61,11 +72,11 @@ def train():
 
     limit = 12500
     for file in os.listdir(r"./aclImdb/aclImdb/train/pos")[:limit]:
-        for word in set(negate_sequence(open(r"./aclImdb/aclImdb/train/pos/" + file,errors='ignore').read())):
+        for word in set((open(r"./aclImdb/aclImdb/train/pos/" + file,errors='ignore').read())):
             pos[word] += 1
             neg['not_' + word] += 1
     for file in os.listdir(r"./aclImdb/aclImdb/train/neg")[:limit]:
-        for word in set(negate_sequence(open(r"./aclImdb/aclImdb/train/neg/" + file,errors='ignore').read())):
+        for word in set((open(r"./aclImdb/aclImdb/train/neg/" + file,errors='ignore').read())):
             neg[word] += 1
             pos['not_' + word] += 1
     prune_features()
@@ -78,7 +89,7 @@ def train():
 
 def classify(text):
     """Probability that word occurs in pos documents"""
-    words = set(word for word in negate_sequence(text) if word in features)
+    words = set(word for word in (text) if word in features)
     if (len(words) == 0): return True
     pos_prob = sum(log((pos[word] + 1) / (2 * totals[0])) for word in words)
     neg_prob = sum(log((neg[word] + 1) / (2 * totals[1])) for word in words)
@@ -89,14 +100,14 @@ def classify2(text):
     For classification from pretrained data
     Probability that word occurs in pos documents
     """
-    words = set(word for word in negate_sequence(text) if word in pos or word in neg)
+    words = set(word for word in (text) if word in pos or word in neg)
     if (len(words) == 0): return True
     pos_prob = sum(log((pos[word] + 1) / (2 * totals[0])) for word in words)
     neg_prob = sum(log((neg[word] + 1) / (2 * totals[1])) for word in words)
     return pos_prob > neg_prob
 
 def classify_demo(text):
-    words = set(word for word in negate_sequence(text) if word in pos or word in neg)
+    words = set(word for word in (text) if word in pos or word in neg)
     if (len(words) == 0): 
         print ("No features to compare on")
         return True
@@ -167,6 +178,9 @@ def feature_selection_trials():
     num_features, accuracy = [], []
     bestk = 0
     limit = 500
+    """
+    Change the path Below depending on the dataset
+    """
     path = r"./aclImdb/aclImdb/test/"
     step = 500
     start = 20000
@@ -178,7 +192,6 @@ def feature_selection_trials():
             features.add(w)
         correct = 0
         size = 0
-        
         """
         Change the path Below depending on the dataset
         """
@@ -189,7 +202,7 @@ def feature_selection_trials():
         for file in os.listdir(path + "neg")[:limit]:
             correct += classify(open(path + "neg/" + file,errors='ignore').read()) == False
             size += 1
-        
+
         num_features.append(k+step)
         accuracy.append(correct / size)
         if (correct / size) > best_accuracy:
@@ -202,7 +215,7 @@ def feature_selection_trials():
     pylab.plot(num_features, accuracy)
     pylab.xlabel('Number of features', fontsize=18)
     pylab.ylabel('Accuracy', fontsize=18)
-    pylab.title('Accuracy Vs Number of Negation Handling')
+    pylab.title('Accuracy Vs Number of Features Original Naive Bayes')
     pylab.show()
 
 os.getcwd()
@@ -210,11 +223,12 @@ os.getcwd()
 def get_paths():
     """
     Returns supervised paths annotated with their actual labels.
+    
     Change the path Below depending on the dataset
     """
     posfiles = [("./aclImdb/aclImdb/test/pos/" + f, True) for f in os.listdir("./aclImdb/aclImdb/test/pos/")]
     negfiles = [("./aclImdb/aclImdb/test/neg/" + f, False) for f in os.listdir("./aclImdb/aclImdb/test/neg/")]
-   
+    
     return posfiles + negfiles
 
 def fscore(classifier, file_paths):

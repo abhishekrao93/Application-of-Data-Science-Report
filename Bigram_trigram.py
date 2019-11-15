@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov  8 20:10:42 2019
+Created on Tue Oct 06 02:53:37 2019
 
-@author: Praneet Shetty
+@author: Group I
 """
 
 from __future__ import division
@@ -41,10 +41,8 @@ def negate_sequence(text):
     prev = None
     pprev = None
     for word in words:
-        # stripped = word.strip(delchars)
         stripped = word.strip(delims).lower()
         negated = "not_" + stripped if negation else stripped
-        #result.append(negated)
         if prev:
             bigram = prev + " " + negated
             result.append(bigram)
@@ -67,7 +65,7 @@ def train():
     global pos, neg, totals
     retrain = False
     
-    # Load counts if they already exist.
+    """Load counts if they already exist."""
     if not retrain and os.path.isfile(CDATA_FILE):
         pos, neg, totals = cPickle.load(open(CDATA_FILE))
         return
@@ -81,7 +79,6 @@ def train():
         for word in set(negate_sequence(open(r"./aclImdb/aclImdb/train/neg/" + file,errors='ignore').read())):
             neg[word] += 1
             pos['not_' + word] += 1
-   # print("POS NEG ",pos,neg)
     prune_features()
 
     totals[0] = sum(pos.values())
@@ -92,8 +89,8 @@ def train():
 
 def classify(text):
     words = set(word for word in negate_sequence(text) if word in features)
+    """Probability that word occurs in pos documents"""
     if (len(words) == 0): return True
-    # Probability that word occurs in pos documents
     pos_prob = sum(log((pos[word] + 1) / (2 * totals[0])) for word in words)
     neg_prob = sum(log((neg[word] + 1) / (2 * totals[1])) for word in words)
     return pos_prob > neg_prob
@@ -101,10 +98,10 @@ def classify(text):
 def classify2(text):
     """
     For classification from pretrained data
+    Probability that word occurs in pos documents
     """
     words = set(word for word in negate_sequence(text) if word in pos or word in neg)
     if (len(words) == 0): return True
-    # Probability that word occurs in pos documents
     pos_prob = sum(log((pos[word] + 1) / (2 * totals[0])) for word in words)
     neg_prob = sum(log((neg[word] + 1) / (2 * totals[1])) for word in words)
     return pos_prob > neg_prob
@@ -119,12 +116,10 @@ def classify_demo(text):
     for word in words:
         pp = log((pos[word] + 1) / (2 * totals[0]))
         np = log((neg[word] + 1) / (2 * totals[1]))
-        #print ("%15s %.9f %.9f" % (word, exp(pp), exp(np)))
         pprob += pp
         nprob += np
     
     return pprob>nprob
-    #print (("Positive" if pprob > nprob else "Negative"), "log-diff = %.9f" % abs(pprob - nprob))
 
 def MI(word):
     """
@@ -196,31 +191,14 @@ def feature_selection_trials():
         size = 0
 
         """
+        Change the path Below depending on the dataset
+        """
         for file in os.listdir(path + "pos")[:limit]:
             correct += classify(open(path + "pos/" + file,errors='ignore').read()) == True
             size += 1
 
         for file in os.listdir(path + "neg")[:limit]:
             correct += classify(open(path + "neg/" + file,errors='ignore').read()) == False
-            size += 1
-        """
-        
-        """
-        for file in os.listdir("./Yelp Reviews/Positive/")[:limit]:
-            correct += classify(open("./Yelp Reviews/Positive/" + file,errors='ignore').read()) == True
-            size += 1
-
-        for file in os.listdir("./Yelp Reviews/Negative/")[:limit]:
-            correct += classify(open("./Yelp Reviews/Negative/" + file,errors='ignore').read()) == False
-            size += 1  
-        """
-        
-        for file in os.listdir("./IMDB_WEB/IMDB_WEB/Positive/")[:limit]:
-            correct += classify(open("./IMDB_WEB/IMDB_WEB/Positive/" + file,errors='ignore').read()) == True
-            size += 1
-
-        for file in os.listdir("./IMDB_WEB/IMDB_WEB/Negative/")[:limit]:
-            correct += classify(open("./IMDB_WEB/IMDB_WEB/Negative/" + file,errors='ignore').read()) == False
             size += 1
         
         num_features.append(k+step)
@@ -238,46 +216,17 @@ def feature_selection_trials():
     pylab.title('Accuracy Vs Number of Features Bigrams Trigrams')
     pylab.show()
 
-def test_pang_lee():
-    """
-    Tests the Pang Lee dataset
-    """
-    total, correct = 0, 0
-    for fname in os.listdir("./aclImdb/aclImdb/test/pos"):
-        correct += int(classify2(open("./aclImdb/aclImdb/test/pos/" + fname,errors='ignore').read()) == True)
-        total += 1
-    for fname in os.listdir("./aclImdb/aclImdb/test/neg"):
-        correct += int(classify2(open("./aclImdb/aclImdb/test/neg/" + fname,errors='ignore').read()) == False)
-        total += 1
-    print ("accuracy: %f" % (correct / total))
-
-#if __name__ == '__main__':
-#    train()
-#    feature_selection_trials()
-    # test_pang_lee()
-    # classify_demo(open("pos_example").read())
-    # classify_demo(open("neg_example").read())
 os.getcwd()
 
 def get_paths():
     """
     Returns supervised paths annotated with their actual labels.
+    Change the path Below depending on the dataset
     """
-    """
+    
     posfiles = [("./aclImdb/aclImdb/test/pos/" + f, True) for f in os.listdir("./aclImdb/aclImdb/test/pos/")]
     negfiles = [("./aclImdb/aclImdb/test/neg/" + f, False) for f in os.listdir("./aclImdb/aclImdb/test/neg/")]
-    """
-    
-    """
-    posfiles = [("./Yelp Reviews/Positive/" + f, True) for f in os.listdir("./Yelp Reviews/Positive/")]
-    negfiles = [("./Yelp Reviews/Negative/" + f, False) for f in os.listdir("./Yelp Reviews/Negative/")]
-    """
-    
-    posfiles = [("./IMDB_WEB/IMDB_WEB/Positive/" + f, True) for f in os.listdir("./Yelp Reviews/Positive/")]
-    negfiles = [("./IMDB_WEB/IMDB_WEB/Negative/" + f, False) for f in os.listdir("./Yelp Reviews/Negative/")]
-    
     return posfiles + negfiles
-
 
 def fscore(classifier, file_paths):
     tpos, fpos, fneg, tneg = 0, 0, 0, 0
@@ -295,12 +244,10 @@ def fscore(classifier, file_paths):
     recall = 1.0 * tpos / (tpos + fneg)
     f1 = 2 * prec * recall / (prec + recall)
     accu = 100.0 * (tpos + tneg) / (tpos+tneg+fpos+fneg)
-    # print "True Positives: %d\nFalse Positives: %d\nFalse Negatives: %d\n" % (tpos, fpos, fneg)
     print(prec, recall,f1, accu)
 
 def main():
     train()
-    #test_pang_lee()
     feature_selection_trials()
     fscore(classify, get_paths())
     #fscore(classify2, get_paths())
