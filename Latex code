@@ -1,0 +1,200 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{float}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage{xcolor}
+\usepackage{lipsum} 
+\usepackage{changepage}
+
+\title{FAST AND ACCURATE SENTIMENT ANALYSIS USING ENHANCED NAIVE BAYES CLASSIFIER}
+\author{GROUP I}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Brief Description:}
+The main motive of this report is to replicate the results of the original paper and test how efficient is the model with the newly constructed data sets. The paper focuses on improving the accuracy of Naive Bayes classifier for sentiment analysis. Sentiment analysis can be termed as a process of predicting the opinions, emotional tone, attitudes etc... of certain product, text, movies, reviews, etc. In order to improve the Accuracy of Nave Bayes classifier model various techniques like negation handling, word n-grams and feature selection by mutual information were used which are explained below. 
+
+\footnote{Original Code : \textcolor{blue}{https://github.com/vivekn/sentiment}\\
+
+Group I Github Repo: \textcolor{blue}{https://github.com/abhishekrao93/Application-of-Data-Science-Report}}
+
+•	\textbf{Negation handling:} Since over here every word is considered as a feature ,the word not good Negation Handling had major contribution in increasing the accuracy of the Naive Bayes Model. In the report, we use every word as a feature, and words such as “Not Good” will contribute as a positive sentiment due to the presence of “Good” in the word. Hence, to tackle such scenarios, the Author had used negation handling which will helps us to consider the presence of negative words such as “Not” in such scenarios. \\
+
+\textbf{•N-grams: }N-grams evaluation method is used to capture the information about adjectives and adverbs and help in analysing the sentiments better. It takes into consideration the adjective in from of the word, for example, it will consider the “definitely recommended” instead of just “definitely” as the word in itself does not have enough value to analyse the sentiment of the data. The paper use bigrams and trigrams for our data set and did not add 4-gram or higher due the capacity of dataset. \\
+
+\textbf{•Feature Selection:} Feature selection is used to remove the redundant features while not hampering the that have high disambiguation capabilities. It removes all the noisy features which can affect the accuracy and efficiency of the model. This paper has done feature selection using Mutual information. As Shown in the plot of Accuracy vs Number of Features chart below, the chart helps us to infer what number of features gives the best Accuracy. \\
+
+%% intend this place
+ \textbf{a.	Mutual Information: }The mutual Information method is a quantity that measures the mutual two dependency of the variables, The Chart below selects the top best k features on the basis of maximum mutual information and checks for the Accuracy. }
+%% intend this place
+\\
+
+\setlength{\parindent}{0cm}
+\textbf{\underline{Evaluation Framework:}} The evaluation of the work was done using \textbf{Classification Accuracy} as mentioned in the paper however various techniques like Precision, F1 score and Recall were also used by the Author but only Accuracy is mentioned in the paper. In the paper the model was trained and tested using 50k IMDb reviews (25k for training and 25k for testing) which seemed to be the relevant data set as it covers a wide range of human emotions and adjectives using which the model can predict polarities of the reviews. The quantitative parameters like accuracy was  the metrics that evaluated the righteousness of framework. On running the model on the original dataset, we got an accuracy of (88.14) for the combination of all the methods, when tested with 25k of IMDb data set with the prior training of 25k of IMDb data set and it took 3 minutes for the execution. The Result is exact similar to what is mentioned in the paper [1]. \setlength{\parindent}{}\\
+
+\setlength{\parindent}{0cm}
+\textbf{\underline{Justification:}} This report was conferenced in international Conference on Intelligent Data engineering and Automated learning in the year 2013 and till now has been cited 203 times as per the google scholar and has 6 mentions. We have also cited the paper for our report.
+\setlength{\parindent}{}
+
+
+\section{Description of Original Dataset}
+
+IMDb Data Set which was the default dataset provided in this original paperwork was researched and accumulated by Andrew Maas et. Al. Overall there were 50,000 highly polar movie reviews which were split into 25,000 training reviews and 25,000 testing reviews. For both training and testing these 25k reviews of the dataset had equal number of positive and negative reviews. The reviews are stored as text files. The text files were segregated into folders based on their sentiments i.e [Positive, Negative]. These Positive and Negative folders are stored inside each of the Train and testing folders as shown in \textbf{(Figure 1)}. Both the training and testing data has equal number of positive and negative reviews.
+
+\footnote{The original dataset can be found in: \textcolor{blue}{ \\http://ai.stanford.edu/~amaas/data/sentiment/ 
+\\https://github.com/abhishekrao93/Application-of-Data-Science-Report/tree/master/Original\%20Dataset/aclImdb}}\\
+
+\footnote{Transformed code link:
+\textcolor{blue}{
+\\ https://github.com/abhishekrao93/Application-of-Data-Science-Report/blob/master/Bigram\_trigram.py
+\\https://github.com/abhishekrao93/Application-of-Data-Science-Report/blob/master/Main\_code\_original.py
+\\https://github.com/abhishekrao93/Application-of-Data-Science-Report/blob/master/Negation\_hand\_NB.py  
+\\https://github.com/abhishekrao93/Application-of-Data-Science-Report/blob/master/Original\_NB.py}}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{1.png}
+\centering
+\caption{Hierarchy of Original Dataset}
+\end{figure}
+        
+
+\section{Replication of Original Work}
+
+The Original Source codes was implemented in Python 2.7 while we replicated the Code in Python version 3.6. The original source had 4 python files, we debugged these files to understand the functionalities of each python file. In order to show the progressive accuracy of the 4 methods we created 4 new files[codes] copied from original code thereby giving accuracy for the original Naïve Bayes and the individual methods through which Accuracy can be increased [Negation handling, Bigram and trigram, Feature Selection].File named as (Main\_Code\_original.py)[3] gives the Accuracy by considering all the methods .We removed all the redundant code/Functions in each file and did not include them as it did not add much value and only increase the line of code and processing time with no added value.\\
+
+
+\textbf{Replication Concerns:} Most of the major bugs faced while running the original code was the with version issue. Because of this we did a lot of significant cross version changes in the original code. The print statement does not support the soft space feature from the old python version. So, the statement has been replaced with a print() function(Refer Figure 2). The XRange function in python 2 was replaced with Range function in the latest version of python. This change was implemented in our code as well. The File was throwing Encoding error while accepting the Text files which was handled by exception handling [Ignoring errors]. A Couple of new libraries and modules where imported into the code for better efficiency and performance. For Each File each functionality was debugged to understand it significance on the final result and the redundant functions were removed. All the Codes were executed and debugged in Spyder.
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{2.png}
+\centering
+\caption{Print Function Code Changes}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{3.png}
+\centering
+\caption{Xrange Function Code Changes}
+\end{figure}
+
+
+
+\section{Construction of new data}
+
+\footnote{Link for the constructed dataset
+\\\textcolor{blue}{https://github.com/abhishekrao93/Application-of-Data-Science-Report/blob/master/New\%20Dataset.zip}}
+
+
+
+Under this section we will describe briefly how the new data sets were created and what all processing have been done in order to prepare the new data set as the test data set for models
+\subsection{Twitter Data Set}
+
+\subsubsection{Source} 
+
+This data was obtained from twitter by extracting the tweets based on the hashtag \textbf{(#AvengersEndGame)}), which will be used to test the accuracy of the models. This data set will be the testing data set
+
+\subsubsection{Processing}
+
+In order to extract tweets from twitter the first requirement is to have a twitter developer account. It provides a gateway to communicate with Twitter platform and uses its API. Communication can be established with many open source programming languages, in this case Python was chosen. Python provides a package known as tweepy which an open source is hosted on GitHub and enables Python to communicate with Twitter API. Using tweepy 200 tweets were extracted, these tweets extracted were based on the movie Avengers End Game.
+All the tweets were pre-processed, and cleaned tweets were obtained which had simple text (text + emojis). \textbf{(Refer Figure 4)}
+
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{4.png}
+\centering
+\caption{Each tweet contained URLs, medias, hashtags and emojis }
+\end{figure}
+
+Now to classify these tweets as positive and negative two methods were used a: Text Blob b: Human Annotation. Tweets were labelled as positive and Negative using TextBlob Package. For Labelling through Human Annotation Survey was made using Qualtrics and the responses of the annotators were recorded as shown in the figure 5, based on the responses from Qualtrics, tweets were labelled as positive and negative which was used further for getting the accuracy. Each Tweet was stored as a text File with respect to their sentiments.\\
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{51.jpg}
+\centering
+\caption{[Survey]}
+\end{figure}
+
+
+\subsection{Hotel Review Data Set}
+
+\subsubsection{Source} 
+
+Hotel Review Data Set was obtained from Kaggle. It is good source of obtaining data sets in the form of CSV, tabular, image data, etc... for developing and experimenting the machine learning models. This data set consists of ratings, text, type, etc... given by 10k users.
+
+
+\subsubsection{Processing}
+Hotel Review Dataset was obtained in the form of .csv file from Kaggle which had 10 columns out of which 2 columns named Rating and Text was taken into consideration for testing the models. Depending on the Text, the Ratings were classified from 1-5. Ratings 1,2 and 3 were taken as negative polarity and Ratings 4 and 5 were taken as positive polarity. \\
+
+The texts were saved and stored in text files and these text files were used to calculate the accuracy. The text files were segregated into positive and negative folders based on the ratings the reviews were given. The reviews which had 1,2 and 3 stars were considered as negative reviews and the reviews which got 4 and 5 starts were termed as positive reviews. Overall there were 6863 positive review text file and 3137 negative review text files that sums up to 10k reviews. The below Image.
+
+
+\subsection{IMDb Movie Review Using Web Scrapping}
+
+\subsubsection{Source} 
+
+This data set was obtained by scrapping IMDb website. Web Scraping is an automated method which pulls enormous amount of data from websites. This data set was prepared by extracting the reviews of the top-rated [ 7,8,9,10] and least rated [0,1,2,3] movies released in the month of October. A list of 100 movies name were gathered.
+
+
+\subsubsection{Processing}
+Once the list of movies was gathered all the reviews  of those movies were scrapped with the help of Beautiful Soup.First the movies Which was released in the month of October with rating of [1,2,3,7,8,9,10] were collected and for each movies their positive and Negative Reviews were scrapped. Polarities of the review was bifurcated based on the ratings given for that review.\\
+Those reviews which were rated as 7,8,9 and 10 stars were scrapped and labelled as positive whereas reviews which were rated as 1,2,3,4 stars were scrapped and labelled as negative. For each review one text file was created based on their respective polarity. Data gathered by web scrapping will be the test data set for the model.\\
+For testing purpose 583 Negative reviews was generated and 1552 Positive Reviews was generated and was stored in two folders [Positive and Negative] which was further used for executing the codes.
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{IMDB.jpg}
+\centering
+\end{figure}
+
+
+\section{Result}
+As discussed in Brief Description section Classification accuracy was used to evaluate the framework results, in addition to this we have used F1 score as well for evaluation Framework. The models were trained on 25k of IMDb training data set and tested on below 3 newly constructed data set.
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{53.JPG}
+\centering
+%\caption{Table 1: Accuracy Table}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[width=450px,height=300px]{52.jpg}
+\centering
+\caption{Table 1: Accuracy Figure}
+\end{figure}
+
+From the Above summary table 1 and Figure 7.1 we can infer that for every dataset the accuracy has improved drastically and is maximum for the method [Feature Selection using mutual information] by combining all the methods .Except Twitter data all the dataset has shown increase in the accuracy ,This may be due to different domain and as tweets contain different types of text [slang, hashtags, short forms] which has its effect on feature and thereby prediction. \\
+
+\begin{figure}[H]
+\includegraphics[width=\textwidth]{54.JPG}
+\centering
+%\caption{Table 2: Accuracy Table [Precision]}
+\end{figure} 
+
+\begin{figure}[H]
+\includegraphics[width=450px,height=300px]{55.png}
+%\includegraphics[width=\textwidth]{55.png}
+\centering
+\caption{Table 1: Accuracy Figure[F1 Score]}
+\end{figure} \\ 
+
+From the Above summary table 2 and Figure 7.2 we can infer that for every dataset the accuracy has improved drastically and is maximum for the method [BiGrams & Trigram] .\\
+
+\textbf{Any Other Reflection:}We Also Tried a method where we Labelled the data set using human annotation by taking a survey [Shown in  Fig 5] for 200 tweets and labelling was done  on the basis of response we got from the survey (i.e. if more than 60 percent of humans considered the tweet as Positive) we labelled the tweet as Positive and same with negative. So, in the end 111 tweets  were Positive and 89 tweets were Negative. On Executing the code, we got the Following Result as mentioned in above summary table[1 &2 ]. The graphs shown below are the Accuracy on selecting the no.of features selected on the basis of Mutual information.
+
+\begin{figure}[H]
+\includegraphics[width=450px,height=400px]{13.png}
+\centering
+%\caption{Original Data set}
+\end{figure}
+
+\section{References}
+
+Fast and accurate sentiment classification using an enhanced Naive Bayes model. (2019). [online] Varanasi, India: Vivek Narayanan, Ishan Arora, Arjun Bhatia, p.7\\
+
+Available at: \textcolor{blue}{https://github.com/vivekn/sentiment}.
+
+
+\end{document}
